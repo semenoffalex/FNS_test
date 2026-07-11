@@ -1,0 +1,131 @@
+---
+title: 'Аналитическое резюме: аномалии налогового риска'
+subtitle: Синтетический датасет · 500 компаний · 2023–2025
+date: "`r format(Sys.Date(), '%d.%m.%Y')`"
+output:
+  pdf_document:
+    toc: no
+  html_document:
+    toc: no
+    theme: readable
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, 
+                      message = FALSE, 
+                      warning = FALSE,
+                      fig.width = 8, 
+                      fig.height = 4.5, 
+                      dpi = 110)
+library(dplyr) 
+library(ggplot2) 
+library(scales) 
+library(knitr)
+
+# Always load config + typology constants (TIER1_FLAGS, TIER2_FLAGS) — needed even
+# when results are read from the cached RDS.
+source("R/00_config.R")
+source("R/03_typologies.R")
+
+rds <- file.path("output", "pipeline_result.rds")
+if (file.exists(rds)) {
+  res <- readRDS(rds)
+} else {
+  source("R/01_load.R")
+  source("R/02_features.R")
+  source("R/04_scoring.R")
+  source("R/05_groups.R")
+  source("run.R")  # defines run_pipeline
+  res <- run_pipeline(CONFIG)
+}
+comp <- res$comp
+n_comp <- dplyr::n_distinct(comp$company_id)
+n_urg  <- sum(comp$bucket == "urgent")
+n_bg   <- sum(comp$bucket == "background")
+n_sig  <- sum(comp$bucket == "economic_signal")
+```
+
+`r if (res$is_sample) "> **ВНИМАНИЕ:** отчёт построен на демонстрационной выборке (test_dataset_smp.csv). Замените на полный test_dataset.csv для реальных выводов."`
+
+## Что нашли
+
+Из **`r n_comp`** компаний выявлено **`r n_urg`** приоритетных (высокий риск × высокая
+материальность), **`r n_bg`** фоновых и **`r n_sig`** случаев, которые являются реальными
+экономическими сигналами, а не аномалиями. Анализ ведётся через призму **налогового риска**
+(ADR-001): восемь типологий, из которых четыре — ведущие (низкая эффективная ставка налога,
+«технические»/транзитные фирмы, вывод прибыли через дивиденды, аномалии маржи относительно отрасли).
+
+## Как проверяли
+
+Отклонения измеряются **относительно отрасли** (`okved_section`) робастной статистикой
+(медиана/MAD, порог |z| ≥ `r CONFIG$robust_z_flag`) с откатом на глобальную норму для малых
+отраслей (ADR-004). Арифметические невозможности (дивиденды > чистой прибыли, нарушение тождеств
+P&L) проверяются абсолютными правилами. Приоритет = **вероятность × материальность** (ADR-005).
+
+## Приоритетная карта
+
+```{r fig-priority}
+plot_dat <- comp %>% filter(n_flags > 0)
+if (nrow(plot_dat) > 0) {
+  ggplot(plot_dat, aes(composite, materiality, color = bucket)) +
+    geom_point(alpha = 0.75, size = 2.4) +
+    scale_y_continuous(labels = label_number(scale_cut = cut_short_scale())) +
+    labs(x = "Композитный риск-скор (вероятность)",
+         y = "Материальность (макс. операц. прибыль, ₽)", color = "Корзина") +
+    theme_minimal(base_size = 12)
+} else {
+  cat("Нет помеченных компаний в выборке.")
+}
+```
+
+## Частота срабатывания типологий
+
+```{r fig-freq}
+flag_cols <- c(TIER1_FLAGS, TIER2_FLAGS)
+freq <- tibble::tibble(
+  typology = flag_cols,
+  n = sapply(flag_cols, function(f) sum(comp[[f]], na.rm = TRUE)),
+  tier = ifelse(flag_cols %in% TIER1_FLAGS, "Tier 1", "Tier 2"))
+ggplot(freq, aes(reorder(typology, n), n, fill = tier)) +
+  geom_col() + coord_flip() +
+  labs(x = NULL, y = "Компаний", fill = NULL) +
+  theme_minimal(base_size = 12)
+```
+
+## Топ приоритетных находок
+
+```{r tbl-top}
+comp %>%
+  filter(bucket == "urgent") %>%
+  arrange(desc(composite)) %>%
+  head(10) %>%
+  transmute(company_id, company_name, okved_section,
+            composite = round(composite, 1),
+            `флагов` = n_flags,
+            `материальность_₽` = comma(round(materiality))) %>%
+  kable()
+```
+
+## Связанные группы (аффилированность)
+
+```{r tbl-groups}
+if (nrow(res$groups) > 0) {
+  res$groups %>% head(8) %>%
+    transmute(founder_id, `компаний` = n_companies, link_strength,
+              `разброс_ETR` = round(etr_spread, 3),
+              companies) %>% kable()
+} else {
+  cat("Групп из >=2 компаний с общим учредителем не обнаружено (для выборки это ожидаемо).")
+}
+```
+
+## Рекомендации руководителю
+
+1. **Первоочередно** отработать компании из корзины *urgent* (правый-верхний угол карты) —
+   там совпадают сильный сигнал и крупная сумма прибыли/налога.
+2. **Технические/транзитные фирмы** (огромная выручка при 1–5 сотрудниках) — быстрый и
+   надёжный сигнал; проверить в первую очередь.
+3. **Экономические сигналы** (крупные, но «чистые» и стабильные компании) — не аномалии;
+   интерпретировать как реальный бизнес, не эскалировать.
+4. Расширить проверку связанных групп после загрузки полного датасета — синтетическая
+   выборка занижает плотность связей.

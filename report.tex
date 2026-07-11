@@ -1,0 +1,235 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\documentclass[
+]{article}
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{longtable,booktabs,array}
+\newcounter{none} % for unnumbered tables
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+% fallback for those not using the hyperref driver hyperxmp:
+\makeatletter
+\@ifundefined{xmpquote}{\newcommand{\xmpquote}[1]{#1}}{}
+\makeatother
+\hypersetup{
+  pdftitle={Аналитическое резюме: аномалии налогового риска},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Аналитическое резюме: аномалии налогового риска}
+\usepackage{etoolbox}
+\makeatletter
+\providecommand{\subtitle}[1]{% add subtitle to \maketitle
+  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
+}
+\makeatother
+\subtitle{Синтетический датасет · 500 компаний · 2023--2025}
+\author{}
+\date{\vspace{-2.5em}11.07.2026}
+
+\begin{document}
+\maketitle
+
+\subsection{Что нашли}\label{ux447ux442ux43e-ux43dux430ux448ux43bux438}
+
+Из \textbf{500} компаний выявлено \textbf{14} приоритетных (высокий риск
+× высокая материальность), \textbf{81} фоновых и \textbf{54} случаев,
+которые являются реальными экономическими сигналами, а не аномалиями.
+Анализ ведётся через призму \textbf{налогового риска} (ADR-001): восемь
+типологий, из которых четыре --- ведущие (низкая эффективная ставка
+налога, «технические»/транзитные фирмы, вывод прибыли через дивиденды,
+аномалии маржи относительно отрасли).
+
+\subsection{Как
+проверяли}\label{ux43aux430ux43a-ux43fux440ux43eux432ux435ux440ux44fux43bux438}
+
+Отклонения измеряются \textbf{относительно отрасли}
+(\texttt{okved\_section}) робастной статистикой (медиана/MAD, порог
+\textbar z\textbar{} ≥ 3.5) с откатом на глобальную норму для малых
+отраслей (ADR-004). Арифметические невозможности (дивиденды
+\textgreater{} чистой прибыли, нарушение тождеств P\&L) проверяются
+абсолютными правилами. Приоритет = \textbf{вероятность × материальность}
+(ADR-005).
+
+\subsection{Приоритетная
+карта}\label{ux43fux440ux438ux43eux440ux438ux442ux435ux442ux43dux430ux44f-ux43aux430ux440ux442ux430}
+
+\pandocbounded{\includegraphics[keepaspectratio]{report_files/figure-latex/fig-priority-1.pdf}}
+
+\subsection{Частота срабатывания
+типологий}\label{ux447ux430ux441ux442ux43eux442ux430-ux441ux440ux430ux431ux430ux442ux44bux432ux430ux43dux438ux44f-ux442ux438ux43fux43eux43bux43eux433ux438ux439}
+
+\pandocbounded{\includegraphics[keepaspectratio]{report_files/figure-latex/fig-freq-1.pdf}}
+
+\subsection{Топ приоритетных
+находок}\label{ux442ux43eux43f-ux43fux440ux438ux43eux440ux438ux442ux435ux442ux43dux44bux445-ux43dux430ux445ux43eux434ux43eux43a}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0973}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.2389}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.3628}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0885}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0619}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1504}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+company\_id
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+company\_name
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+okved\_section
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+composite
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+флагов
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+материальность\_₽
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+C0449 & ПАО «Инвест-Ко-449» & Выращивание зерновых & 72 & 6 &
+745,854,682 \\
+C0327 & ПАО «Союз-Пром-327» & Грузоперевозки автомобильным транспортом &
+72 & 6 & 284,530,386 \\
+C0419 & ООО «Кристалл-Холдинг-419» & Транспортная логистика & 64 & 5 &
+840,374,242 \\
+C0008 & ООО «Омега-Маркет-008» & Аудит и бухгалтерия & 48 & 3 &
+1,693,602,836 \\
+C0487 & АО «Южный-Корп-487» & Аудит и бухгалтерия & 48 & 3 &
+1,294,976,024 \\
+C0234 & ООО «Логист-Торг-234» & Лесозаготовка & 48 & 3 & 910,736,724 \\
+C0288 & ООО «Премиум-Логистик-288» & Производство пластмасс & 48 & 3 &
+776,605,582 \\
+C0307 & ООО «Капитал-Групп-307» & Гостиницы & 48 & 3 & 711,103,717 \\
+C0164 & ПАО «Сигма-Сервис-164» & Рестораны и кафе & 48 & 3 &
+600,442,784 \\
+C0226 & ООО «Партнёр-Маркет-226» & Грузоперевозки автомобильным
+транспортом & 48 & 3 & 391,807,009 \\
+\end{longtable}
+}
+
+\subsection{Связанные группы
+(аффилированность)}\label{ux441ux432ux44fux437ux430ux43dux43dux44bux435-ux433ux440ux443ux43fux43fux44b-ux430ux444ux444ux438ux43bux438ux440ux43eux432ux430ux43dux43dux43eux441ux442ux44c}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1264}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1034}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1609}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1379}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.4713}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+founder\_id
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+компаний
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+link\_strength
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+разброс\_ETR
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+companies
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+FND-43730 & 6 & founder\_only & 32.516 & C0073, C0159, C0171, C0184,
+C0431, C0493 \\
+FND-39500 & 2 & founder\_only & 0.732 & C0443, C0458 \\
+FND-55977 & 6 & strong & 0.658 & C0043, C0049, C0071, C0210, C0231,
+C0333 \\
+FND-69325 & 6 & strong & 0.326 & C0022, C0106, C0152, C0328, C0362,
+C0363 \\
+\end{longtable}
+}
+
+\subsection{Рекомендации
+руководителю}\label{ux440ux435ux43aux43eux43cux435ux43dux434ux430ux446ux438ux438-ux440ux443ux43aux43eux432ux43eux434ux438ux442ux435ux43bux44e}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Первоочередно} отработать компании из корзины \emph{urgent}
+  (правый-верхний угол карты) --- там совпадают сильный сигнал и крупная
+  сумма прибыли/налога.
+\item
+  \textbf{Технические/транзитные фирмы} (огромная выручка при 1--5
+  сотрудниках) --- быстрый и надёжный сигнал; проверить в первую
+  очередь.
+\item
+  \textbf{Экономические сигналы} (крупные, но «чистые» и стабильные
+  компании) --- не аномалии; интерпретировать как реальный бизнес, не
+  эскалировать.
+\item
+  Расширить проверку связанных групп после загрузки полного датасета ---
+  синтетическая выборка занижает плотность связей.
+\end{enumerate}
+
+\end{document}
