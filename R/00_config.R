@@ -6,7 +6,7 @@
 
 CONFIG <- list(
   # --- data ---
-  data_path          = "test_dataset.csv",      # real 1500-row file (ADR-006 open item)
+  data_path          = "test_dataset.csv",      # основной датасет (1500 строк)
   data_path_fallback = "test_dataset_smp.csv",  # 10-row sample for smoke tests
   out_dir            = "output",
 

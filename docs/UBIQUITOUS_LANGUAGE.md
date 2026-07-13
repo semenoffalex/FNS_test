@@ -1,7 +1,6 @@
 # Ubiquitous Language
 
-Domain glossary for the tax-risk anomaly analysis. Updated live as the grilling session
-crystallizes terms.
+Глоссарий предметной области для анализа налогового риска.
 
 ## Entities
 
@@ -48,6 +47,6 @@ crystallizes terms.
 ## Flagged ambiguities
 
 - "Company or group of companies" in TASK.md — we distinguish **Company** (single entity)
-  from **Group** (related-party set). Which linking attributes define a Group is TBD (see grilling).
-- "Profit" is ambiguous across `gross_profit`, `operating_profit`, `net_profit` — the ETR
-  denominator must be pinned down (see grilling).
+  from **Group** (related-party set). Linking attributes: `founder_id` (primary), `address_hash` (strengthens).
+- "Profit" is ambiguous across `gross_profit`, `operating_profit`, `net_profit` — ETR uses
+  `operating_profit` (see ADR-005).

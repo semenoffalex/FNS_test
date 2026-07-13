@@ -36,8 +36,7 @@ findings.csv       # ranked flagged companies/groups (written by the pipeline)
 
 ## Open items
 
-- Real `test_dataset.csv` (1500 rows) is NOT yet in the workspace; only the 10-row sample is.
-  Pipeline is built and smoke-tested on the sample; real findings await the full file.
+- None. Full `test_dataset.csv` (1500 rows) is in the repository; pipeline runs on it by default.
 
 ## Alternatives considered
 

@@ -82,6 +82,16 @@ save_outputs <- function(res, config = CONFIG) {
   ggsave(file.path(config$out_dir, "fig2_typology_freq.png"), p2,
          width = 8, height = 5, dpi = 120)
 
+  # Fig 3: bipartite affiliation graph (founders = circles, companies = squares)
+  aff_graph <- build_affiliation_graph(res$cy, res$groups, res$comp)
+  if (!is.null(aff_graph)) {
+    plot_affiliation_graph(
+      aff_graph,
+      file = file.path(config$out_dir, "fig3_affiliation_graph.png"),
+      title = "Группы аффилированности (двудольный граф)"
+    )
+  }
+
   invisible(findings)
 }
 

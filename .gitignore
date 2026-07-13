@@ -48,7 +48,7 @@ po/*~
 # RStudio Connect folder
 rsconnect/
 
-# LLM Related
+# Локальные файлы (не публиковать)
 TASK.md
 
 # Misc

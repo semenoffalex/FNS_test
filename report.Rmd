@@ -26,6 +26,7 @@ library(knitr)
 # when results are read from the cached RDS.
 source("R/00_config.R")
 source("R/03_typologies.R")
+source("R/05_groups.R")
 
 rds <- file.path("output", "pipeline_result.rds")
 if (file.exists(rds)) {
@@ -34,7 +35,6 @@ if (file.exists(rds)) {
   source("R/01_load.R")
   source("R/02_features.R")
   source("R/04_scoring.R")
-  source("R/05_groups.R")
   source("run.R")  # defines run_pipeline
   res <- run_pipeline(CONFIG)
 }
@@ -108,6 +108,18 @@ comp %>%
 
 ## Связанные группы (аффилированность)
 
+Двудольный граф (`igraph`): **круги** — учредители (`founder_id`), **квадраты** — компании.
+Цвет квадрата — корзина приоритета; толстые рёбра — группы с общим адресом (*strong*, ADR-007).
+
+```{r fig-affiliation, fig.height=6, fig.width=9}
+aff_graph <- build_affiliation_graph(res$cy, res$groups, comp)
+if (!is.null(aff_graph)) {
+  plot_affiliation_graph(aff_graph, title = "Группы аффилированности")
+} else {
+  cat("Граф аффилированности не построен: нет групп с >=2 компаниями.")
+}
+```
+
 ```{r tbl-groups}
 if (nrow(res$groups) > 0) {
   res$groups %>% head(8) %>%
@@ -127,5 +139,5 @@ if (nrow(res$groups) > 0) {
    надёжный сигнал; проверить в первую очередь.
 3. **Экономические сигналы** (крупные, но «чистые» и стабильные компании) — не аномалии;
    интерпретировать как реальный бизнес, не эскалировать.
-4. Расширить проверку связанных групп после загрузки полного датасета — синтетическая
-   выборка занижает плотность связей.
+4. Проверить связанные группы на графе аффилированности — особенно кластеры с широким
+   разбросом ETR (признак перераспределения прибыли внутри группы).
