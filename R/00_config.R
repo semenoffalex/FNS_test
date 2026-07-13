@@ -34,3 +34,16 @@ CONFIG <- list(
 
 dir.create(CONFIG$out_dir, showWarnings = FALSE, recursive = TRUE)
 set.seed(CONFIG$seed)
+
+# UTF-8 locale: without it Rscript uses LC_ALL=C and Cyrillic becomes <U+XXXX> in tables/plots.
+setup_locale <- function() {
+  for (loc in c("en_US.UTF-8", "ru_RU.UTF-8", "C.UTF-8")) {
+    ok <- tryCatch({
+      res <- Sys.setlocale("LC_ALL", loc)
+      !is.na(res) && grepl("UTF-8|utf8", res, fixed = TRUE)
+    }, error = function(e) FALSE)
+    if (ok) break
+  }
+  options(encoding = "UTF-8")
+  invisible(TRUE)
+}

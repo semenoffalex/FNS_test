@@ -9,6 +9,7 @@ args <- commandArgs(trailingOnly = TRUE)
 do_render <- "--render" %in% args
 
 source("R/00_config.R")
+setup_locale()
 source("R/01_load.R")
 source("R/02_features.R")
 source("R/03_typologies.R")
@@ -112,5 +113,12 @@ if (do_render && requireNamespace("rmarkdown", quietly = TRUE)) {
   rmarkdown::render("report.Rmd",
                     output_dir = CONFIG$out_dir,
                     quiet = TRUE)
-  cat("Report rendered to ", file.path(CONFIG$out_dir, "report.html"), "\n", sep = "")
+  out_html <- file.path(CONFIG$out_dir, "report.html")
+  root_html <- "report.html"
+  file.copy(out_html, root_html, overwrite = TRUE)
+  if (!identical(readBin(out_html, "raw", file.info(out_html)$size),
+                 readBin(root_html, "raw", file.info(root_html)$size))) {
+    stop("report.html copies are not identical: ", root_html, " vs ", out_html)
+  }
+  cat("Report rendered to ", out_html, " and ", root_html, " (identical)\n", sep = "")
 }

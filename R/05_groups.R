@@ -110,7 +110,7 @@ plot_affiliation_graph <- function(g, file = NULL, title = "Группы афф�
   cols[is.na(cols)] <- "#CCCCCC"
 
   shapes <- ifelse(V(g)$type, "circle", "square")
-  sizes  <- ifelse(V(g)$type, 22, 12)
+  sizes  <- ifelse(V(g)$type, 14, 8)
 
   # подписи: все учредители; компании — только с флагами риска
   labels <- ifelse(
@@ -120,17 +120,22 @@ plot_affiliation_graph <- function(g, file = NULL, title = "Группы афф�
   )
 
   # толщина/цвет рёбер: «strong» = общий адрес (ADR-007)
-  el <- ends(g, E(g))
-  founder_ls <- ifelse(V(g)$type[el[, 1]], V(g)$link_strength[el[, 1]], V(g)$link_strength[el[, 2]])
-  edge_cols  <- ifelse(founder_ls == "strong", "#444444", "#CCCCCC")
-  edge_width <- ifelse(founder_ls == "strong", 2.0, 1.0)
+  # ends() по умолчанию возвращает имена, а не индексы — нужен names = FALSE
+  el <- ends(g, E(g), names = FALSE)
+  founder_ls <- ifelse(
+    V(g)$type[el[, 1]],
+    V(g)$link_strength[el[, 1]],
+    V(g)$link_strength[el[, 2]]
+  )
+  edge_cols  <- ifelse(founder_ls == "strong", "#222222", "#666666")
+  edge_width <- ifelse(founder_ls == "strong", 5.0, 3.0)
 
   open_graph_device(file)
   if (!is.null(file)) on.exit(dev.off(), add = TRUE)
 
   plot(
     g,
-    layout = layout_with_graphopt,
+    layout = layout_with_graphopt(g, niter = 1000),
     vertex.shape = shapes,
     vertex.color = cols,
     vertex.size = sizes,
@@ -152,7 +157,7 @@ plot_affiliation_graph <- function(g, file = NULL, title = "Группы афф�
     ),
     pch = c(21, 22, 22, 22, 22, NA),
     lty = c(NA, NA, NA, NA, NA, 1),
-    lwd = c(NA, NA, NA, NA, NA, 2),
+    lwd = c(NA, NA, NA, NA, NA, 4),
     col = c(NA, NA, NA, NA, NA, "#444444"),
     pt.bg = c("#56B4E9", bucket_colors["urgent"], bucket_colors["background"],
               bucket_colors["economic_signal"], bucket_colors["not_flagged"], NA),
